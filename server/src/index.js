@@ -1,8 +1,10 @@
 import express from "express";
 import fs from "fs";
 import cors from "cors";
+import multer from "multer";
 
 const app = express();
+const upload = multer({dest: "./documents/"})
 
 app.use(cors("*"));
 app.use(express.json());
@@ -18,6 +20,21 @@ app.get("/journal", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+// Insecure File Upload
+app.post("/upload-journal", upload.single("journal"), async (req, res) => {
+  if (req.file) {
+    console.log("Uploaded file:", req.file);
+    
+    if (req.file.mimetype !== "text/plain") {
+      return res.status(400).send("Only text files are allowed!");
+    }
+
+    res.status(200).send("File uploaded successfully!");
+  } else {
+    res.status(400).send("No file uploaded.");
+  }
+})
 
 const PORT = 5000;
 
