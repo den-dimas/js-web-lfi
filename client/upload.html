@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Journal</title>
+  <style>
+    /* ScienceDirect-inspired styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+      color: #333;
+    }
+
+    header {
+      background-color: #ff6c00;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 80px);
+    }
+
+    .upload-container {
+      background: #fff;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .upload-container h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 1.25rem;
+      border-bottom: 2px solid #ff6c00;
+      padding-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+    }
+
+    .submit-btn {
+      margin-top: 20px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #ff6c00;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background-color: #e55b00;
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .error {
+      color: #ff0000;
+    }
+
+    .success {
+      color: #00aa00;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    Upload Your Journal
+  </header>
+  <main>
+    <div class="upload-container">
+      <h2>File Upload</h2>
+      <form id="uploadForm" method="POST" action="http://localhost:5000/upload-journal" enctype="multipart/form-data">
+        <label for="file">Choose your journal file:</label>
+        <input type="file" id="file" name="journal" required>
+        <button type="submit" class="submit-btn">Upload</button>
+      </form>
+      <div class="message" id="message"></div>
+    </div>
+  </main>
+  <script>
+    const form = document.getElementById('uploadForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      message.textContent = 'Uploading...';
+      message.className = '';
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          message.textContent = 'File uploaded successfully!';
+          message.className = 'message success';
+        } else {
+          message.textContent = 'File upload failed.';
+          message.className = 'message error';
+        }
+      } catch (error) {
+        message.textContent = 'An error occurred while uploading the file.';
+        message.className = 'message error';
+      }
+    });
+  </script>
+</body>
+
+</html>
