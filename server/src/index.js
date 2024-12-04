@@ -5,6 +5,7 @@ import multer from "multer";
 import path from "path"
 
 const app = express();
+const upload = multer({dest: "./documents/"})
 
 //config multer
 const storage = multer.diskStorage({
@@ -32,6 +33,21 @@ app.get("/journal", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+// Insecure File Upload
+app.post("/upload-journal", upload.single("journal"), async (req, res) => {
+  if (req.file) {
+    console.log("Uploaded file:", req.file);
+    
+    if (req.file.mimetype !== "text/plain") {
+      return res.status(400).send("Only text files are allowed!");
+    }
+
+    res.status(200).send("File uploaded successfully!");
+  } else {
+    res.status(400).send("No file uploaded.");
+  }
+})
 
 const PORT = 5000;
 
