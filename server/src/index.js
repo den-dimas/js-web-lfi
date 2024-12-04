@@ -5,7 +5,6 @@ import multer from "multer";
 import path from "path"
 
 const app = express();
-const upload = multer({dest: "./documents/"})
 
 //config multer
 const storage = multer.diskStorage({
