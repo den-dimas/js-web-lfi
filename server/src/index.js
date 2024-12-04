@@ -1,8 +1,22 @@
 import express from "express";
 import fs from "fs";
 import cors from "cors";
+import multer from "multer";
+import path from "path"
 
 const app = express();
+
+//config multer
+const storage = multer.diskStorage({
+	  destination: (req, file, cb) => {
+		      cb(null, "../client/uploads");
+		    },
+	  filename: (req, file, cb) => {
+		      cb(null, file.originalname);
+		    }
+});
+
+const upload = multer({ storage });
 
 app.use(cors("*"));
 app.use(express.json());
@@ -21,7 +35,22 @@ app.get("/journal", async (req, res) => {
 
 const PORT = 5000;
 
-app.listen(PORT, async () => {
+//insecure file upload
+app.post("/upload-journal", upload.single("journal"), async (req, res) => {
+	  if (req.file) {
+		      console.log("Uploaded file:", req.file);
+		      
+		      if (req.file.mimetype !== "text/plain") {
+			            return res.status(400).send("Only text files are allowed!");
+			          }
+
+		      res.status(200).send("File uploaded successfully!");
+		    } else {
+			        res.status(400).send("No file uploaded.");
+			      }
+})
+
+app.listen(PORT, '0.0.0.0', async () => {
   try {
     /* === Connection information === */
     process.stdout.write("\x1Bc");
